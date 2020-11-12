@@ -65,8 +65,8 @@ As an optimization it uses a spatial map and calculates polygon bounding boxes o
 
 
 ## Credits:
-  * Helped me understand the premise and their code provided me with tons of helpful tips for getting this implemented: [https://github.com/OneLoneCoder](URL)
-  * The actual page I ended up following to really get the idea: [https://ncase.me/sight-and-light/](URL)
+  * Helped me understand the premise and their code provided me with tons of helpful tips for getting this implemented: [https://github.com/OneLoneCoder](https://github.com/OneLoneCoder)
+  * The actual page I ended up following to really get the idea: [https://ncase.me/sight-and-light/](https://ncase.me/sight-and-light/)
 
 
 ### Screenshot of the library in use in a game
