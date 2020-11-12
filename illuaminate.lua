@@ -8,6 +8,7 @@ local angleSortFunc = function(a, b)
 end
 
 local function getLineIntersectionPoint(Ax1, Ay1, Ax2, Ay2, Bx1, By1, Bx2, By2)
+  local intersectX, intersectY
   local s1x, s1y = vector.sub(Ax2, Ay2, Ax1, Ay1)
   local s2x, s2y = vector.sub(Bx2, By2, Bx1, By1)
 
@@ -15,7 +16,6 @@ local function getLineIntersectionPoint(Ax1, Ay1, Ax2, Ay2, Bx1, By1, Bx2, By2)
   local s = ( -s1y * (Ax1 - Bx1) + s1x * (Ay1 - By1)) / b
   local t = ( s2x * (Ay1 - By1) - s2y * (Ax1 - Bx1)) / b
 
-  local intersectX, intersectY
   -- There was an intersection
   if s >= 0 and s <= 1 and t >= 0 and t <= 1 then
     intersectX = Ax1 + (t * s1x)
@@ -23,6 +23,15 @@ local function getLineIntersectionPoint(Ax1, Ay1, Ax2, Ay2, Bx1, By1, Bx2, By2)
   end
 
   return intersectX, intersectY
+end
+
+local function intersection(Ax1, Ay1, Ax2, Ay2, Bx1, By1, Bx2, By2)
+  local d = (Ax1 - Ax2) * (By1 - By2) - (Ay1 - Ay2) * (Bx1 - Bx2)
+  local a = Ax1 * Ay2 - Ay1 * Ax2
+  local b = Bx1 * By2 - By1 * Bx2
+  local x = (a * (Bx1 - Bx2) - (Ax1 - Ax2) * b) / d
+  local y = (a * (By1 - By2) - (Ay1 - Ay2) * b) / d
+  return x, y
 end
 
 local function calculateVisibilityPolygon(originX, originY, radius, polygons)
@@ -63,7 +72,7 @@ local function calculateVisibilityPolygon(originX, originY, radius, polygons)
         -- origin so far. If it is, then that's the point we want to store
         -- in visibilityPolygon
         for _, polygon2 in ipairs(polygons) do
-          for u=1,#polygon2-4,4 do
+          for u=1,#polygon2-2,2 do
             local segmentX1 = polygon2[u]
             local segmentY1 = polygon2[u+1]
             local segmentX2 = polygon2[u+2]
@@ -77,8 +86,7 @@ local function calculateVisibilityPolygon(originX, originY, radius, polygons)
             originX, originY, rayX2, rayY2,
             segmentX1, segmentY1, segmentX2, segmentY2
             )
-
-
+            
             if intersectX and intersectY then
               -- TODO: Not sure about this
               local length = vector.len2(vector.sub(intersectX, intersectY, originX, originY))
