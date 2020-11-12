@@ -1,5 +1,7 @@
 local vector = require 'libs.vector-light'
 
+-- https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
+
 
 local angleSortFunc = function(a, b)
   return a.angle < b.angle
@@ -60,28 +62,31 @@ local function calculateVisibilityPolygon(originX, originY, radius, polygons)
         -- segment. If it does, check if it's the shortest length from
         -- origin so far. If it is, then that's the point we want to store
         -- in visibilityPolygon
-        for u=1,#polygon-4,4 do
-          local segmentX1 = polygon[u]
-          local segmentY1 = polygon[u+1]
-          local segmentX2 = polygon[u+2]
-          local segmentY2 = polygon[u+3]
+        for _, polygon2 in ipairs(polygons) do
+          for u=1,#polygon2-4,4 do
+            local segmentX1 = polygon2[u]
+            local segmentY1 = polygon2[u+1]
+            local segmentX2 = polygon2[u+2]
+            local segmentY2 = polygon2[u+3]
 
-          --print("Checking", originX, originY, rayX2, rayY2, segmentX1, segmentY1, segmentX2, segmentY2)
+            --print("Checking", originX, originY, rayX2, rayY2, segmentX1, segmentY1, segmentX2, segmentY2)
 
-          -- Now check for actual intersection between
-          -- the ray cast from the origin point and the line segment.
-          local intersectX, intersectY = getLineIntersectionPoint(
-          originX, originY, rayX2, rayY2,
-          segmentX1, segmentY1, segmentX2, segmentY2
-          )
+            -- Now check for actual intersection between
+            -- the ray cast from the origin point and the line segment.
+            local intersectX, intersectY = getLineIntersectionPoint(
+            originX, originY, rayX2, rayY2,
+            segmentX1, segmentY1, segmentX2, segmentY2
+            )
 
-          if intersectX and intersectY then
-            -- TODO: Not sure about this
-            local length = vector.len2(vector.sub(intersectX, intersectY, originX, originY))
-            if length < minLength then
-              minX, minY, minAngle = intersectX, intersectY, angle
-              minLength = length
-              found = true
+
+            if intersectX and intersectY then
+              -- TODO: Not sure about this
+              local length = vector.len2(vector.sub(intersectX, intersectY, originX, originY))
+              if length < minLength then
+                minX, minY, minAngle = intersectX, intersectY, angle
+                minLength = length
+                found = true
+              end
             end
           end
         end
