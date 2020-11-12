@@ -59,7 +59,7 @@ local visibilityPolygon = {}
 --local startX, startY, endX, endY
 
 function love.update(dt)
-  local radius = 1000
+  local radius = 2000
   -- startX = testOriginX
   -- startY = testOriginY
   -- endX, endY = love.mouse.getPosition()
@@ -78,15 +78,37 @@ function love.draw()
   love.graphics.polygon('line', surroundPolygon)
 
   --love.graphics.line(startX, startY, endX, endY)
+  local x, y = love.mouse.getPosition()
 
   for _, point in ipairs(visibilityPolygon) do
-    local x, y = love.mouse.getPosition()
     love.graphics.line(x, y, point.x, point.y)
 
     love.graphics.setColor(0,1,0)
     love.graphics.circle('fill', point.x, point.y, 4)
     love.graphics.setColor(1,1,1)
   end
+
+  love.graphics.setColor(0.6, 0.1, 0.3, 1)
+
+  for i=1,#visibilityPolygon-1 do
+    local point1 = visibilityPolygon[i]
+    local point2 = visibilityPolygon[i+1]
+    love.graphics.polygon('fill', {
+      x, y,
+      point1.x, point1.y,
+      point2.x, point2.y
+    })
+  end
+
+  local firstPoint = visibilityPolygon[1]
+  local lastPoint = visibilityPolygon[#visibilityPolygon]
+  love.graphics.polygon('fill', {
+    x, y,
+    lastPoint.x, lastPoint.y,
+    firstPoint.x, firstPoint.y
+  })
+
+  love.graphics.setColor(1,1,1)
 
   love.graphics.circle('fill', rayOriginX, rayOriginY, 10)
   love.graphics.circle('fill', testOriginX, testOriginY, 5)
