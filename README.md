@@ -50,7 +50,7 @@ As an optimization it uses a spatial map and calculates polygon bounding boxes o
 ### Drawing with a dimmer global illumination:
     -- Call after your light positions have been updated
     function preDrawLights()
-      love.graphics.setCanvas({ self.lightCanvas, stencil = true})
+      love.graphics.setCanvas({ lightCanvas, stencil = true})
       love.graphics.clear(0.4, 0.4, 0.4) -- Global illumination level
       self.lighter:drawLights()
       love.graphics.setCanvas()
@@ -59,7 +59,7 @@ As an optimization it uses a spatial map and calculates polygon bounding boxes o
     -- Call after you have drawn your scene (but before UI)
     function drawLights()
       love.graphics.setBlendMode("multiply", "premultiplied")
-      love.graphics.draw(self.lightCanvas)
+      love.graphics.draw(lightCanvas)
       love.graphics.setBlendMode("alpha")
     end
 
