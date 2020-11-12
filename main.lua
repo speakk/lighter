@@ -28,22 +28,22 @@ local function getTestPolygons()
     0, 0
   }
 
-  local allCombined = {}
+  local allCombined = {testPolygon, testPolygon2, surroundPolygon}
 
-  for _, coordinate in ipairs(testPolygon) do
-    table.insert(allCombined, coordinate)
-  end
-  for _, coordinate in ipairs(testPolygon2) do
-    table.insert(allCombined, coordinate)
-  end
-  for _, coordinate in ipairs(surroundPolygon) do
-    table.insert(allCombined, coordinate)
-  end
+  --for _, coordinate in ipairs(testPolygon) do
+  --  table.insert(allCombined, coordinate)
+  --end
+  --for _, coordinate in ipairs(testPolygon2) do
+  --  table.insert(allCombined, coordinate)
+  --end
+  --for _, coordinate in ipairs(surroundPolygon) do
+  --  table.insert(allCombined, coordinate)
+  --end
 
   return testPolygon, testPolygon2, surroundPolygon, allCombined
 end
 
-local polygon1, polygon2, surroundPolygon, allPoints = getTestPolygons()
+local polygon1, polygon2, surroundPolygon, allCombined = getTestPolygons()
 local polygons = { polygon1, polygon2 }
 
 local rayOriginX, rayOriginY = 0, 0
@@ -58,10 +58,8 @@ local testOriginX, testOriginY = 350, 400
 local visibilityPolygon = {}
 --local startX, startY, endX, endY
 
-local testOrigin
-
 function love.update(dt)
-  -- local radius = 300
+  local radius = 1000
   -- startX = testOriginX
   -- startY = testOriginY
   -- endX, endY = love.mouse.getPosition()
@@ -69,7 +67,7 @@ function love.update(dt)
   -- endX, endY = vector.add(startX, startY, vector.mul(radius, dirX, dirY))
 
   local x, y = love.mouse.getPosition()
-  visibilityPolygon = illuaminate.calculateVisibilityPolygon(x, y, 300, allPoints)
+  visibilityPolygon = illuaminate.calculateVisibilityPolygon(x, y, radius, allCombined)
 end
 
 function love.draw()
@@ -84,6 +82,10 @@ function love.draw()
   for _, point in ipairs(visibilityPolygon) do
     local x, y = love.mouse.getPosition()
     love.graphics.line(x, y, point.x, point.y)
+
+    love.graphics.setColor(0,1,0)
+    love.graphics.circle('fill', point.x, point.y, 4)
+    love.graphics.setColor(1,1,1)
   end
 
   love.graphics.circle('fill', rayOriginX, rayOriginY, 10)
