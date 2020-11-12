@@ -2,6 +2,8 @@ local vector = require 'libs.vector-light'
 local Class = require 'libs.humpclass'
 local shash = require 'libs.shash'
 
+local defaultGradientImage = love.graphics.newImage('media/default_light.png')
+
 local angleSortFunc = function(a, b)
   return a.angle < b.angle
 end
@@ -139,6 +141,23 @@ local function getLightBoundingBox(light)
   return light.x - halfRadius, light.y - halfRadius, light.radius, light.radius
 end
 
+local function updateLight(self, light)
+  self.lightHash:update(light, getLightBoundingBox(light))
+  local polygons = {}
+
+  local x,y,w,h = getLightBoundingBox(light)
+  -- Get polygons only within the reach of the light
+  self.polygonHash:each(x,y,w,h, function(polygon)
+    table.insert(polygons, polygon)
+  end)
+
+  local visibilityPolygon = calculateVisibilityPolygon(light.x, light.y, light.radius, polygons)
+  self.visibilityPolygons[light] = visibilityPolygon
+  self.stencilFunctions[light] = function()
+    self:drawVisibilityPolygon(light)
+  end
+end
+
 local Lighter = Class{
   init = function(self)
     self.polygonHash = shash.new()
@@ -146,17 +165,31 @@ local Lighter = Class{
     self.lights = {}
     self.polygons = {}
     self.visibilityPolygons = {}
+    self.stencilFunctions = {}
   end,
-  addLight = function(self, x, y, radius, r, g, b, a)
+  addLight = function(self, x, y, radius, r, g, b, a, gradientImage)
     local light = {
       x = x, y = y, radius = radius,
-      r = r, g = g, b = b, a = a
+      r = r or 1, g = g or 1, b = b or 1, a = a or 1,
+      gradientImage = gradientImage or defaultGradientImage
     }
     table.insert(self.lights, light)
-    self:updateLightVisibilityPolygon(light)
     self.lightHash:add(light, getLightBoundingBox(light))
+    updateLight(self, light)
 
     return light
+  end,
+  updateLight = function(self, light, x, y, radius, r, g, b, a, gradientImage)
+    light.x = x or light.x
+    light.y = y or light.y
+    light.radius = radius or light.radius
+    light.r = r or light.r
+    light.g = g or light.g
+    light.b = b or light.b
+    light.a = a or light.a
+    light.gradientImage = gradientImage or light.gradientImage
+
+    updateLight(self, light)
   end,
   removeLight = function(self, light)
     for i, existingLight in ipairs(self.lights) do
@@ -167,27 +200,13 @@ local Lighter = Class{
       end
     end
   end,
-  updateLightVisibilityPolygon = function(self, light)
-    local polygons = {}
-
-    local x,y,w,h = getLightBoundingBox(light)
-    -- Get polygons only within the reach of the light
-    self.polygonHash:each(x,y,w,h, function(polygon)
-      table.insert(polygons, polygon)
-    end)
-
-    print("updateLightVisibilityPolygon, polygons in radius:", #polygons)
-
-    local visibilityPolygon = calculateVisibilityPolygon(light.x, light.y, light.radius, polygons)
-    self.visibilityPolygons[light] = visibilityPolygon
-  end,
   addPolygon = function(self, polygon)
     table.insert(self.polygons, polygon)
     self.polygonHash:add(polygon, getPolygonBoundingBox(polygon))
 
     local x, y, w, h = getPolygonBoundingBox(polygon)
     self.lightHash:each(x, y, w, h, function(light)
-      self:updateLightVisibilityPolygon(light)
+      updateLight(self, light)
     end)
   end,
   removePolygon = function(self, polygon)
@@ -203,7 +222,7 @@ local Lighter = Class{
     ::continue::
 
     self.lightHash:each(x, y, w, h, function(light)
-      self:updateLightVisibilityPolygon(light)
+      updateLight(self, light)
     end)
   end,
   drawVisibilityPolygon = function(self, light)
@@ -233,7 +252,13 @@ local Lighter = Class{
   end,
   drawLights = function(self)
     for _, light in ipairs(self.lights) do
-      self:drawVisibilityPolygon(light)
+      love.graphics.stencil(self.stencilFunctions[light], "replace", 1)
+      love.graphics.setStencilTest("greater", 0)
+      local w, h = light.gradientImage:getDimensions()
+      local scale = light.radius / w
+      love.graphics.setColor(light.r, light.g, light.b, light.a)
+      love.graphics.draw(light.gradientImage, light.x, light.y, 0, scale, scale, w/2, h/2)
+      love.graphics.setStencilTest()
     end
   end
 }

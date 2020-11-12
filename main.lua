@@ -4,8 +4,8 @@ local vector    = require 'libs.vector-light'
 love.window.setMode(800, 600, {resizable=true})
 
 local lighter = Lighter()
-lighter:addLight(300, 400, 400)
-lighter:addLight(900, 700, 200)
+local light1 = lighter:addLight(300, 400, 1200, 1, 0.5, 0.5)
+lighter:addLight(900, 700, 1200, 0, 1, 1)
 
 local function getTestPolygons()
   local testPolygon = {
@@ -35,6 +35,8 @@ for _, polygon in ipairs(polygons) do
 end
 
 function love.update(dt)
+  local x, y = love.mouse.getPosition()
+  lighter:updateLight(light1, x, y)
 end
 
 function love.draw()
