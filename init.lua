@@ -1,10 +1,16 @@
-local vector = require 'libs.vector-light'
-local Class = require 'libs.humpclass'
-local shash = require 'libs.shash'
+local PATH = (...):gsub('%.init$', '')
 
-local defaultGradientImage = love.graphics.newImage('media/default_light.png')
+local vector = require(PATH .. '.libs.vector-light')
+local Class = require(PATH .. '.libs.humpclass')
+local shash = require(PATH .. '.libs.shash')
 
-local angleSortFunc = function(a, b)
+local MEDIAPATH = PATH:gsub("%.", "/")
+
+local defaultGradientImage = love.graphics.newImage(MEDIAPATH .. '/media/default_light.png')
+
+-- PRIVATE FUNCTIONS START
+
+local function angleSortFunc(a, b)
   return a.angle < b.angle
 end
 
@@ -158,6 +164,8 @@ local function updateLight(self, light)
   end
 end
 
+-- PRIVATE FUNCTIONS END
+
 local Lighter = Class{
   init = function(self)
     self.polygonHash = shash.new()
@@ -194,7 +202,7 @@ local Lighter = Class{
   removeLight = function(self, light)
     for i, existingLight in ipairs(self.lights) do
       if existingLight == light then
-        table.remove(i)
+        table.remove(self.lights, i)
         self.lightHash:remove(light)
         return
       end
@@ -258,6 +266,7 @@ local Lighter = Class{
       local scale = light.radius / w
       love.graphics.setColor(light.r, light.g, light.b, light.a)
       love.graphics.draw(light.gradientImage, light.x, light.y, 0, scale, scale, w/2, h/2)
+      love.graphics.setColor(1,1,1,1)
       love.graphics.setStencilTest()
     end
   end
