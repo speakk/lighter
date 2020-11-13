@@ -225,26 +225,34 @@ local Lighter = Class{
     for i, existingLight in ipairs(self.lights) do
       if existingLight == light then
         table.remove(self.lights, i)
+        self.visibilityPolygons[light] = nil
         self.lightHash:remove(light)
         return
       end
     end
   end,
   addPolygon = function(self, polygon)
-    table.insert(self.polygons, polygon)
-    self.polygonHash:add(polygon, getPolygonBoundingBox(polygon))
+    local newPolygon = {}
+    for i, coordinate in ipairs(polygon) do
+      newPolygon[i] = coordinate
+    end
 
-    local x, y, w, h = getPolygonBoundingBox(polygon)
+    table.insert(self.polygons, newPolygon)
+    self.polygonHash:add(newPolygon, getPolygonBoundingBox(newPolygon))
+
+    local x, y, w, h = getPolygonBoundingBox(newPolygon)
     self.lightHash:each(x, y, w, h, function(light)
       updateLight(self, light)
     end)
+
+    return newPolygon
   end,
   removePolygon = function(self, polygon)
     local x, y, w, h = getPolygonBoundingBox(polygon)
     for i, existingPolygon in ipairs(self.polygons) do
       if existingPolygon == polygon then
-        table.remove(i)
         self.polygonHash:remove(polygon)
+        table.remove(self.polygons, i)
         goto continue
       end
     end
