@@ -88,8 +88,10 @@ local function calculateVisibilityPolygon(originX, originY, radius, polygons)
       local y = polygon[i+1]
       local a1, a2 = vector.sub(x, y, originX, originY)
 
+      local angleA = math.atan2(a2, a1)
+
       local angles = {
-      	math.atan2(a2, a1), --angleA
+      	angleA,
       	angleA + 0.0001,    --angleB
       	angleA - 0.0001,    --angleC
       }
