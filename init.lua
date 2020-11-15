@@ -30,6 +30,9 @@ local MEDIAPATH = PATH:gsub("%.", "/")
 
 local defaultGradientImage = love.graphics.newImage(MEDIAPATH .. '/media/default_light.png')
 
+-- This is a local array that will be used in calculateVisibilityPolygon
+local _angles = {}
+
 -- PRIVATE FUNCTIONS START
 
 local function angleSortFunc(a, b)
@@ -66,12 +69,17 @@ local function calculateVisibilityPolygon(originX, originY, radius, polygons)
 
   -- Required for the lines to always have something to intersect
   local halfRadius = radius / 2
+  local xa = originX - halfRadius
+  local xb = originX + halfRadius
+  local ya = originY - halfRadius
+  local yb = originY + halfRadius
+
   local surroundPolygon = {
-    originX - halfRadius, originY - halfRadius,
-    originX + halfRadius, originY - halfRadius,
-    originX + halfRadius, originY + halfRadius,
-    originX - halfRadius, originY + halfRadius,
-    originX - halfRadius, originY - halfRadius
+    xa, ya,
+    xb, ya,
+    xb, yb,
+    xa, yb,
+    xa, ya
   }
 
   table.insert(allPolygons, surroundPolygon)
@@ -82,17 +90,16 @@ local function calculateVisibilityPolygon(originX, originY, radius, polygons)
       local x = polygon[i]
       local y = polygon[i+1]
       local a1, a2 = vector.sub(x, y, originX, originY)
+
       local angleA = math.atan2(a2, a1)
-      local angleB = angleA + 0.0001
-      local angleC = angleA - 0.0001
+
+      _angles[1] = angleA
+      _angles[2] = angleA + 0.0001
+      _angles[3] = angleA - 0.0001
 
       -- Go through all 3 angles as rays cast from originX, originY
       for j=1,3 do
-        local angle
-        if j == 1 then angle = angleA end
-        if j == 2 then angle = angleB end
-        if j == 3 then angle = angleC end
-
+        local angle = angles[j]
 
         -- The ray we cast is originX, originY, rayX2, rayY2
         -- rayX2, rayY2 are origin + angle*radius
