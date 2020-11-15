@@ -30,6 +30,9 @@ local MEDIAPATH = PATH:gsub("%.", "/")
 
 local defaultGradientImage = love.graphics.newImage(MEDIAPATH .. '/media/default_light.png')
 
+-- This is a local array that will be used in calculateVisibilityPolygon
+local _angles = {}
+
 -- PRIVATE FUNCTIONS START
 
 local function angleSortFunc(a, b)
@@ -90,11 +93,9 @@ local function calculateVisibilityPolygon(originX, originY, radius, polygons)
 
       local angleA = math.atan2(a2, a1)
 
-      local angles = {
-      	angleA,
-      	angleA + 0.0001,    --angleB
-      	angleA - 0.0001,    --angleC
-      }
+      _angles[1] = angleA
+      _angles[2] = angleA + 0.0001
+      _angles[3] = angleA - 0.0001
 
       -- Go through all 3 angles as rays cast from originX, originY
       for j=1,3 do
