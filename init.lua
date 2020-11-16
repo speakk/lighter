@@ -99,7 +99,7 @@ local function calculateVisibilityPolygon(originX, originY, radius, polygons)
 
       -- Go through all 3 angles as rays cast from originX, originY
       for j=1,3 do
-        local angle = angles[j]
+        local angle = _angles[j]
 
         -- The ray we cast is originX, originY, rayX2, rayY2
         -- rayX2, rayY2 are origin + angle*radius
