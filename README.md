@@ -22,23 +22,23 @@ As an optimization it uses a spatial map and calculates polygon bounding boxes o
         100, 100,
         300, 100,
         300, 300,
-        100, 300,
-        100, 100
+        100, 300
     }
-    
+
     local lighterWall = lighter:addPolygon(wall)
 
     local lightX, lightY = 500, 500
-    -- addLight(x,y,radius,r,g,b,a)
-    local light = lighter:addLight(lightX, lightY, 300, 1, 0.5, 0.5)
+
+    -- addLight signature: (x,y,radius,r,g,b,a)
+    local light = lighter:addLight(lightX, lightY, 500, 1, 0.5, 0.5)
 
     function love.update(dt)
-        lightY = lightY + dt * 20
+        lightX, lightY = love.mouse.getPosition()
         lighter:updateLight(light, lightX, lightY)
     end
 
     function love.draw()
-        love.graphics.polygon(wall)
+        love.graphics.polygon('fill', wall)
         lighter:drawLights()
     end
 

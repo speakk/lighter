@@ -100,7 +100,16 @@ local function calculateVisibilityPolygon(originX, originY, radius, polygons)
   local allPolygons = {}
 
   for _, polygon in ipairs(polygons) do
-    table.insert(allPolygons, polygon)
+    local copiedPolygon = {}
+    for i, coord in ipairs(polygon) do copiedPolygon[i] = coord end
+
+    -- Self close if start and end points don't match
+    if copiedPolygon[1] ~= copiedPolygon[#copiedPolygon-1] or copiedPolygon[2] ~= copiedPolygon[#copiedPolygon] then
+      table.insert(copiedPolygon, copiedPolygon[1])
+      table.insert(copiedPolygon, copiedPolygon[2])
+    end
+
+    table.insert(allPolygons, copiedPolygon)
   end
 
   table.insert(allPolygons, surroundPolygon)
