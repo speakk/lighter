@@ -228,19 +228,29 @@ local function updateLight(self, light)
   self.visibilityPolygons[light] = visibilityPolygon
   self.stencilFunctions[light] = function()
     self:drawVisibilityPolygon(light)
+
+    if self.litPolygons then
+      love.graphics.setColor(0,0,0,1)
+      for _, polygon in ipairs(polygons) do
+        love.graphics.polygon('fill', polygon)
+      end
+      love.graphics.setColor(1,1,1,1)
+    end
   end
 end
 
 -- PRIVATE FUNCTIONS END
 
 local Lighter = Class{
-  init = function(self)
+  init = function(self, options)
     self.polygonHash = shash.new()
     self.lightHash = shash.new()
     self.lights = {}
     self.polygons = {}
     self.visibilityPolygons = {}
     self.stencilFunctions = {}
+
+    self.litPolygons = options.litPolygons
   end,
   addLight = function(self, x, y, radius, r, g, b, a, gradientImage)
     local light = {
