@@ -250,7 +250,9 @@ local Lighter = Class{
     self.visibilityPolygons = {}
     self.stencilFunctions = {}
 
-    self.litPolygons = options.litPolygons
+    if options then
+      self.litPolygons = options.litPolygons
+    end
   end,
   addLight = function(self, x, y, radius, r, g, b, a, gradientImage)
     local light = {
