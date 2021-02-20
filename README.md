@@ -25,7 +25,7 @@ As an optimization it uses a spatial map and calculates polygon bounding boxes o
         100, 300
     }
 
-    local lighterWall = lighter:addPolygon(wall)
+    lighter:addPolygon(wall)
 
     local lightX, lightY = 500, 500
 
@@ -44,7 +44,7 @@ As an optimization it uses a spatial map and calculates polygon bounding boxes o
 
     -- Clean up
     -- lighter:removeLight(light)
-    -- lighter:removePolygon(lighterWall)
+    -- lighter:removePolygon(wall)
 
 ## Extra tip
 ### Drawing with a dimmer global illumination:
