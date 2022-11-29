@@ -7,12 +7,6 @@ Clone the repo into your libs directory and require with
 
     require 'path.to.lighter'
 
-## How it works
-For each light we cast rays towards wall polygon corners (aka map features). Checks intersections.
-Builds a visibility polygon and uses it as the stencil for drawing the light.
-
-As an optimization it uses a spatial map and calculates polygon bounding boxes on the fly so that only polygons within light radius get included in the visibility polygon calculations.
-
 ## Usage
     local Lighter = require 'path.to.lighter'
 
@@ -71,4 +65,12 @@ As an optimization it uses a spatial map and calculates polygon bounding boxes o
 
 ### Screenshot of the library in use in a game
 ![Screenshot of the library in use in a game](./screenshot.jpg)
+
+
+## How it works under the hood
+For each light we cast rays towards wall polygon corners (aka map features). Checks intersections.
+Builds a visibility polygon and uses it as the stencil for drawing the light.
+
+As an optimization it uses a spatial map and calculates polygon bounding boxes on the fly so that only polygons within light radius get included in the visibility polygon calculations.
+
 
