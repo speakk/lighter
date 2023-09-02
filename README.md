@@ -40,8 +40,8 @@ Clone the repo into your libs directory and require with
     -- lighter:removeLight(light)
     -- lighter:removePolygon(wall)
 
-## Extra tip
-### Drawing with a dimmer global illumination:
+### How to use in your game context with a darker global illumination:
+#### (remember you can use any combination of additive & multiplicative blending to achieve a result you like)
     -- Call after your light positions have been updated
     function preDrawLights()
       love.graphics.setCanvas({ lightCanvas, stencil = true})
@@ -57,6 +57,17 @@ Clone the repo into your libs directory and require with
       love.graphics.setBlendMode("alpha")
     end
 
+### Function signatures of the public API:
+```
+    init = function(self, options)
+    addLight = function(self, x, y, radius, r, g, b, a, gradientImage)
+    updateLight = function(self, light, x, y, radius, r, g, b, a, gradientImage)
+    removeLight = function(self, light)
+    addPolygon = function(self, polygon)
+    removePolygon = function(self, polygon)
+    drawVisibilityPolygon = function(self, light)
+    drawLights = function(self)
+```
 
 ## Credits:
   * Helped me understand the premise and their code provided me with tons of helpful tips for getting this implemented: [https://github.com/OneLoneCoder](https://github.com/OneLoneCoder)
