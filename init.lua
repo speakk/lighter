@@ -311,11 +311,9 @@ local Lighter = Class{
       if existingPolygon.original == polygon then
         self.polygonHash:remove(existingPolygon)
         table.remove(self.polygons, i)
-        goto continue
+        break
       end
     end
-
-    ::continue::
 
     self.lightHash:each(x, y, w, h, function(light)
       updateLight(self, light)
